@@ -26,16 +26,20 @@ from sklearn.metrics import roc_auc_score, average_precision_score, roc_curve, \
     confusion_matrix, precision_recall_curve
 from scipy.special import softmax
 
-from tensorflow.python.ops.math_ops import arg_max
+from tensorflow.python.ops.math_ops import arg_max  # This is being depreciated
 
 import result_processsing as rp
 
+# ************************** Imports **************************
+
+
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+FULL_DATASET = "final_dataset.csv"
 
 
 def filter_dataset(filters):
     """ Applies filters to the dataset """
-    df = pd.read_csv("final_dataset.csv")
+    df = pd.read_csv(FULL_DATASET)
 
     # Filter rows where 'validity' is False, this is done because we don't want to remove our True statements from
     # The dataset
