@@ -1,5 +1,7 @@
 import pandas as pd
 
+OUTPUT_FILE = "complete_results.csv"
+
 
 def count(dataframe):
     return dataframe.shape[0]
@@ -116,9 +118,9 @@ def false_negative(dataframe):
 def add_results(dataframe, dataset_creator_filter, category_filter):
 
     try:
-        out_put_df = pd.read_csv("complete_results.csv", encoding='utf-8-sig')
+        out_put_df = pd.read_csv(OUTPUT_FILE, encoding='utf-8-sig')
     except FileNotFoundError:
-        print("complete_results.csv")
+        print(f"{OUTPUT_FILE} Not Found")
 
 
     new_row = {'dataset_creator': dataset_creator_filter,
@@ -140,4 +142,4 @@ def add_results(dataframe, dataset_creator_filter, category_filter):
 
     out_put_df = out_put_df.append(new_row, ignore_index=False)
 
-    out_put_df.to_csv("complete_results.csv", encoding='utf-8-sig')
+    out_put_df.to_csv(OUTPUT_FILE, encoding='utf-8-sig')
