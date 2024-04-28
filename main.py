@@ -1,5 +1,5 @@
 import os
-
+import time
 # import sys
 from dataclasses import dataclass, field
 import json
@@ -18,28 +18,27 @@ from transformers import (
     set_seed
 )
 from transformers.training_args import TrainingArguments
-
 from multimodal_transformers.data import load_data_from_folder
 from multimodal_transformers.model import TabularConfig, AutoModelWithTabular
-
 from sklearn.metrics import roc_auc_score, average_precision_score, roc_curve, \
     confusion_matrix, precision_recall_curve
 from scipy.special import softmax
 
-from tensorflow.python.ops.math_ops import arg_max  # This is being depreciated
+from tensorflow.python.ops.math_ops import arg_max
+# WARNING:tensorflow:From <ipython-input-41-22be204424c1>:4: arg_max (from tensorflow.python.ops.gen_math_ops) is deprecated and will be removed in a future version.
+# Instructions for updating:
+# Use `tf.math.argmax` instead
 
 import result_processsing as rp
 
-# ************************** Imports **************************
-
+# ************************* IMPORTS ******************************************************
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-FULL_DATASET = "final_dataset.csv"
-
+DATASET_FILE = "final_dataset.csv"
 
 def filter_dataset(filters):
     """ Applies filters to the dataset """
-    df = pd.read_csv(FULL_DATASET)
+    df = pd.read_csv(DATASET_FILE)
 
     # Filter rows where 'validity' is False, this is done because we don't want to remove our True statements from
     # The dataset
@@ -80,9 +79,7 @@ def run_test(filters, category_filter):
     #                 'unique_word_ratio', 'sentiment_index', 'hatred_index', 'support',
     #                 'opposed', 'neutral']
 
-
     filter_dataset(filters)
-
 
     # Test Settings
 
@@ -94,7 +91,7 @@ def run_test(filters, category_filter):
                         'True_difficult_words', 'True_linsear_write_formula',
                         'True_difficult_words.1', 'True_gunning_fog',
                         'characters', 'words', 'avg_word_length', 'numbers',
-                        'unique_word_ratio', 'sentiment_index', 'hatred_index', 'support',
+                        'sentiment_index', 'hatred_index', 'support',
                         'opposed', 'neutral']
 
     numerical_inputs = list(set(numerical_inputs) - set(category_filter))  # This filters out the columns
@@ -510,14 +507,23 @@ def run_test(filters, category_filter):
 #       -- This removes the numbers column from use
 
 if __name__ == "__main__":
+    """ Code used to run and test various features """
+    # filters = [{'creator': [('chatgpt', True)]}, {'creator': [('human', True)]}, {'creator': [('gemini', True)]}]
+    #
+    # category_filters = [['True_fleshes', 'True_smog_index',
+    #             'True_flesch_kincaid_grade', 'True_coleman_liau_index',
+    #             'True_automated_readability_index', 'True_dale_chall_readability_score',
+    #             'True_difficult_words', 'True_linsear_write_formula',
+    #             'True_difficult_words.1', 'True_gunning_fog',
+    #             'sentiment_index', 'hatred_index', 'support',
+    #             'opposed', 'neutral']]
+    #
+    # for filter_1 in filters:
+    #     for filter_2 in category_filters:
+    #         run_test(filter_1, filter_2)
 
-    filters = [{'creator': [('chatgpt', True)]}
-               ]
-
-    category_filters = [['numbers', 'avg_word_length', 'words', 'characters', 'unique_word_ratio',
-                         'support', 'opposed', 'True_automated_readability_index',
-                         'True_dale_chall_readability_score']]
-
-    for filter_1 in filters:
-        for filter_2 in category_filters:
-            run_test(filter_1, filter_2)
+    """ Testing Code to time the Code """
+    start = time.time()
+    run_test({'creator': [('chatgpt', True)]}, 'support')
+    end = time.time()
+    print(f"Time taken: {end - start}")
